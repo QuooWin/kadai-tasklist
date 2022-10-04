@@ -2,8 +2,10 @@ package controllers;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import models.Tasklist_DTO;
 import utils.DBUtil;
+import validators.TasklistValidator;
 
 /**
  * Servlet implementation class CreateServlet
@@ -36,20 +39,34 @@ public class CreateServlet extends HttpServlet {
             EntityManager em = DBUtil.createEntityManager();
             em.getTransaction().begin();
 
-            Tasklist_DTO m = new Tasklist_DTO();
+            Tasklist_DTO t = new Tasklist_DTO();
 
             String title = request.getParameter("title");
-            m.setTitle(title);
+            t.setTitle(title);
 
             String content = request.getParameter("content");
-            m.setContent(content);
+            t.setContent(content);
 
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-            m.setCreated_at(currentTime);
-            m.setUpdated_at(currentTime);
+            t.setCreated_at(currentTime);
+            t.setUpdated_at(currentTime);
+
+         // バリデーションを実行してエラーがあったら新規登録のフォームに戻る
+            List<String> errors = TasklistValidator.validate(t);
+            if(errors.size() > 0) {
+                em.close();
+
+                // フォームに初期値を設定、さらにエラーメッセージを送る
+                request.setAttribute("_token", request.getSession().getId());
+                request.setAttribute("tasks", t);
+                request.setAttribute("errors", errors);
+
+                RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/tasklist/new.jsp");
+                rd.forward(request, response);
+            } else {
 
             // データベースに保存
-            em.persist(m);
+            em.persist(t);
             em.getTransaction().commit();
             request.getSession().setAttribute("flush", "登録が完了しました。");       // ここを追記
             em.close();
@@ -58,4 +75,5 @@ public class CreateServlet extends HttpServlet {
         }
     }
 
+}
 }

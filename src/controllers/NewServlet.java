@@ -33,7 +33,7 @@ public class NewServlet extends HttpServlet {
         request.setAttribute("_token", request.getSession().getId());
 
         // おまじないとしてのインスタンスを生成
-        request.setAttribute("tasklist", new Tasklist_DTO());
+        request.setAttribute("tasks", new Tasklist_DTO());
 
         RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/tasklist/new.jsp");
         rd.forward(request, response);

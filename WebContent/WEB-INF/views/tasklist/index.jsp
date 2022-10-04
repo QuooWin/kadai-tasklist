@@ -10,15 +10,27 @@
         </c:if>
         <h2>タスク一覧</h2>
         <ul>
-            <c:forEach var="tasklist" items="${tasklist}">
+            <c:forEach var="tasks" items="${tasks}">
                 <li><a
-                    href="${pageContext.request.contextPath}/show?id=${message.id}">
-                        <c:out value="${tasklist.id}" />
-                </a> ：<c:out value="${tasklist.title}"></c:out> &gt; <c:out
-                        value="${tasklist.content}" /></li>
+                    href="${pageContext.request.contextPath}/show?id=${tasks.id}">
+                        <c:out value="${tasks.id}" />
+                </a> ：<c:out value="${tasks.title}"></c:out> &gt; <c:out
+                        value="${tasks.content}" /></li>
             </c:forEach>
         </ul>
-
+<div id="pagination">
+            （全 ${tasks_count} 件）<br />
+            <c:forEach var="i" begin="1" end="${((tasks_count - 1) / 15) + 1}" step="1">
+                <c:choose>
+                    <c:when test="${i == page}">
+                        <c:out value="${i}" />&nbsp;
+                    </c:when>
+                    <c:otherwise>
+                        <a href="${pageContext.request.contextPath}/index?page=${i}"><c:out value="${i}" /></a>&nbsp;
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
+        </div>
         <p>
             <a href="${pageContext.request.contextPath}/new">新規タスクの投稿</a>
         </p>

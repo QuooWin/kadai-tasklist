@@ -16,9 +16,13 @@ import javax.persistence.Table;
         @NamedQuery(
             name = "getAllTasklist",
             query = "SELECT m FROM Tasklist_DTO AS m ORDER BY m.id DESC"
-        )
+        ),
+        @NamedQuery(
+                name = "getTasklist",
+                query = "SELECT COUNT(m) FROM Tasklist_DTO AS m"
+                )
     })
-    @Table(name = "tasklist")
+    @Table(name = "tasks")
 public class Tasklist_DTO{
         @Id
         @Column(name = "id")
